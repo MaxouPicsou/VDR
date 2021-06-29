@@ -2,6 +2,7 @@ import socket
 import pyautogui
 import time
 import os
+import configparser
 
 
 class ScreenAgent:
@@ -14,7 +15,9 @@ class ScreenAgent:
     def send_screenshot(self, filename):
         if not os.path.exists(filename):
             pyautogui.screenshot(filename)
+            os.system("gzip " + filename)
         buf = 8192
+        filename += ".gz"
         f = open(filename, 'rb')
 
         self.sock.sendto(b'start', (self.ip, self.port))
@@ -29,6 +32,15 @@ class ScreenAgent:
 
 
 agent = ScreenAgent("localhost", 12345)
-agent.send_screenshot("tux.bmp")
+last_time = 0
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+while True:
+    current_time = time.time()
+    if current_time - last_time > int(config['frame']['frequency']):
+        agent.send_screenshot("test.bmp")
+        last_time = time.time()
+
 
 
