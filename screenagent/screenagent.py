@@ -39,6 +39,7 @@ class ScreenAgent:
                 if os.path.exists(filename):
                     os.remove(filename)
                 last_time = time.time()
+                filename = "screenshot.bmp"
 
 
 
