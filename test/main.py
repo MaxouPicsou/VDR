@@ -1,6 +1,4 @@
-from vdr import Vdr
-from screenagent import ScreenAgent
-
+from vdr.vdr import Vdr
 
 VDR = Vdr()
 VDR.add_connection("localhost", 12345, "test1")

@@ -90,17 +90,3 @@ class ReceivingNmea(threading.Thread):
                     tools.safety(split_data, file)
             except IndexError:
                 print(errno)
-
-
-VDR = Vdr()
-VDR.add_connection("localhost", 12345, "test")
-VDR.add_connection("localhost", 12346, "test2")
-m = ReceivingFrame(VDR, "test")
-m2 = ReceivingNmea(VDR, "test2")
-
-m.start()
-m2.start()
-
-
-
-
