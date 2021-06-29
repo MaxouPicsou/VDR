@@ -1,2 +1,1 @@
-import sentences
-import tools
+from .vdr import *
