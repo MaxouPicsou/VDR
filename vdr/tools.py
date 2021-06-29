@@ -1,4 +1,4 @@
-import sentences
+from .sentences import *
 
 
 def update(filename):
@@ -16,15 +16,15 @@ def safety(sentence, file):
     for i in sentence:
 
         if 'door' in i:
-            file.write(sentence[0] + " " + sentences.SDS(id_door, sentence[sentence.index(i) + 1]))
+            file.write(sentence[0] + " " + SDS(id_door, sentence[sentence.index(i) + 1]))
             id_door += 1
         elif 'ballast' in i:
-            file.write(sentence[0] + " " + sentences.SBS(id_ballast,
+            file.write(sentence[0] + " " + SBS(id_ballast,
                                                          sentence[sentence.index(i) + 1],
                                                          sentence[sentence.index(i) + 2],
                                                          sentence[sentence.index(i) + 3]))
             id_ballast += 1
         elif 'alarm' in i:
-            file.write(sentence[0] + " " + sentences.SAS(id_alarm, sentence[sentence.index(i) + 1]))
+            file.write(sentence[0] + " " + SAS(id_alarm, sentence[sentence.index(i) + 1]))
             id_alarm += 1
 
