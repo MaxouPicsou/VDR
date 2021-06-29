@@ -1,4 +1,4 @@
-import sentences
+from vdr import sentences
 
 
 def update(filename):
