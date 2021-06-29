@@ -1,7 +1,7 @@
 
 # VDR
 
-VDR is a Python library for simulate a VDR.
+VDR is a Python library to simulate a VDR (Voyage Data Recorder).
 
 ## Installation
 
@@ -12,13 +12,13 @@ pip install vdr
 ```
 
 ## Usage
-
+You first need to configure your VDR that will receive all the data.
 ```python
 import vdr
 
-VDR = vdr.Vdr('/home/USER') # Create the VDR with its storage path
-VDR.add_connection('ECDIS') # Create socket connection called 'ECDIS'
-VDR.add_connection('nmea') # Create socket connection called 'nmea'
+VDR = vdr.Vdr('/home/USER')                         # Create the VDR with its storage path
+VDR.add_connection("localhost", 12345, 'ECDIS')     # Create socket connection called 'ECDIS'
+VDR.add_connection("localhost", 12346, 'nmea')      # Create socket connection called 'nmea'
 
 # Initialize threads with each data type that connections will received
 ecdis = vdr.ReceivingFrame(VDR, "ECDIS")
@@ -27,6 +27,26 @@ nmea = vdr.ReceivingNmea(VDR, "nmea")
 # Start threads, ready to receive and store data
 ecdis.start()
 nmea.start()
+```
+
+Then, the library proposed different kind of agent to facilitate data emission.
+### Frame Agent
+```python
+import screenagent
+import configparser
+import time
+
+agent = screenagent.ScreenAgent("localhost", 12345)
+last_time = 0
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+while True:
+    current_time = time.time()
+    if current_time - last_time > int(config['frame']['frequency']):
+        agent.send_screenshot("test.bmp")
+        last_time = time.time()
+
 ```
 
 ## Contributing
