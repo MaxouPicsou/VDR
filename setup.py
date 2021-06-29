@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='vdr',
-    version='1.0.0',
+    version='1.0.3',
     author='Maxence Lannuzel',
     author_email='maxence.lannuzel@ecole-navale.fr',
     description='A simple library to simulate a VDR.',
@@ -16,12 +16,12 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     classifiers=[
-        'development Status :: 4 - Beta',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'License :: MIT',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: French',
-        'Operating System :: Ubuntu',
-        'Programming language :: Python :: 3.8',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Software Development'
     ],
     install_requires=[
