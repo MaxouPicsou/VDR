@@ -4,9 +4,17 @@ import errno
 import os
 import socket
 import threading
+import time
 from pathlib import Path
 import configparser
 from .tools import *
+
+
+frame_creation_times = []
+nmea_creation_times = []
+config = configparser.ConfigParser()
+config.read('config.ini')
+record_duration = config['record']['duration']
 
 
 class Vdr:
@@ -20,6 +28,7 @@ class Vdr:
         self.nmea_filename = "000000"
         self.voice_filename = "000000"
         self.connections = {}
+        self.start_time = time.time()
 
         # Create tree structure of VDR if it is not already exists
         if not os.path.exists(path + "/data"):
@@ -38,12 +47,14 @@ class Vdr:
 
 
 class ReceivingFrame(threading.Thread):
+
     def __init__(self, vdr, key):
         threading.Thread.__init__(self)
         self.vdr = vdr
         self.key = key
 
     def run(self):
+        end_time = self.vdr.start_time + int(config['record']['duration'])
         while True:
             data = self.vdr.connections[self.key].recvfrom(1024)
             path = self.vdr.path + "/frame/" + self.vdr.frame_filename + ".bmp"
@@ -59,6 +70,17 @@ class ReceivingFrame(threading.Thread):
                         print("picture received")
                         f.close()
                         os.system("gunzip " + self.vdr.path + "/frame/" + self.vdr.frame_filename + ".bmp.gz")
+                        frame_creation_times.append((self.vdr.frame_filename, os.path.getmtime(self.vdr.path + "/frame/" + self.vdr.frame_filename + ".bmp")))
+                        print(frame_creation_times)
+                        current_time = time.time()
+
+                        if current_time > end_time:
+                            for i in frame_creation_times:
+                                if i[1] < current_time - int(config['record']['duration']):
+                                    os.remove(self.vdr.path + "/frame/" + i[0] + ".bmp")
+                                    frame_creation_times.pop(0)
+                                else:
+                                    break
                         break
                     else:
                         f.write(data[0])
@@ -72,6 +94,7 @@ class ReceivingNmea(threading.Thread):
         self.vdr = vdr
 
     def run(self):
+        end_time = self.vdr.start_time + int(config['record']['duration'])
         while True:
             data = self.vdr.connections[self.key].recvfrom(1024)
             print(self.key, ":", data)
@@ -79,8 +102,20 @@ class ReceivingNmea(threading.Thread):
             file = open(path, "a")
             file_size = Path(path).stat().st_size
             if file_size > int(self.vdr.config['nmea']['size']):
-                self.vdr.nmea_filename = update(self.vdr.nmea_filename)
                 file.close()
+                nmea_creation_times.append((self.vdr.nmea_filename, os.path.getmtime(self.vdr.path + "/nmea/" + self.vdr.nmea_filename)))
+                print(nmea_creation_times)
+                current_time = time.time()
+
+                if current_time > end_time:
+                    for i in nmea_creation_times:
+                        if i[1] < current_time - int(config['record']['duration']):
+                            os.remove(self.vdr.path + "/nmea/" + i[0])
+                            nmea_creation_times.pop(0)
+                        else:
+                            break
+
+                self.vdr.nmea_filename = update(self.vdr.nmea_filename)
                 file = open(path, "a")
 
             split_data = bytes.decode(data[0]).split(',')
