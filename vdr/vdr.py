@@ -121,7 +121,13 @@ class ReceivingNmea(threading.Thread):
             split_data = bytes.decode(data[0]).split(',')
 
             try:
-                if split_data[1] == "safety_management_system":
+                if split_data[1] == "propulsion_management_system":
+                    propulsion(split_data, file)
+                elif split_data[1] == "safety_management_system":
                     safety(split_data, file)
+                elif split_data[1] == "power_management_system":
+                    power(split_data, file)
+                elif split_data[1] == "safety_management_system":
+                    utilities(split_data, file)
             except IndexError:
                 print(errno)

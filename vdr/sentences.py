@@ -142,7 +142,7 @@ def PBP(id, capacity, level, quantity):
     return sentence + checksum(sentence) + "\t\n"
 
 
-# SAFETY MANAGEMENT SYSTEM
+# UTILITIES MANAGEMENT SYSTEM
 def TAP(id, type, capacity, level, quantity, autonomy, pump_state, valve_state):
     """Tank Parameters"""
     fields = (
