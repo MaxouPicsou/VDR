@@ -127,7 +127,7 @@ class ReceivingNmea(threading.Thread):
                     safety(split_data, file)
                 elif split_data[1] == "power_management_system":
                     power(split_data, file)
-                elif split_data[1] == "safety_management_system":
+                elif split_data[1] == "utilities_management_system":
                     utilities(split_data, file)
             except IndexError:
                 print(errno)
