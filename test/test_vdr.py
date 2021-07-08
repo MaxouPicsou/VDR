@@ -1,11 +1,14 @@
 import vdr
 
 VDR = vdr.Vdr()
-VDR.add_connection("localhost", 12345, "ECDIS")
-VDR.add_connection("localhost", 12346, "nmea")
+VDR.add_connection("localhost", 12345, "ecdis")
+VDR.add_connection("localhost", 12346, "radar")
+VDR.add_connection("localhost", 12347, "nmea")
 
-ecdis = vdr.ReceivingFrame(VDR, "ECDIS")
-nmea = vdr.ReceivingNmea(VDR, "nmea")
+ECDIS = vdr.ReceivingFrame(VDR, "ecdis")
+RADAR = vdr.ReceivingFrame(VDR, "radar")
+NMEA = vdr.ReceivingNmea(VDR, "nmea")
 
-ecdis.start()
-nmea.start()
+ECDIS.start()
+RADAR.start()
+NMEA.start()
