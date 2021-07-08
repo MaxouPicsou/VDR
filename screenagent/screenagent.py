@@ -3,6 +3,13 @@ import pyautogui
 import time
 import os
 import configparser
+import logging
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+logging.basicConfig()
+logging.getLogger().setLevel(logging.INFO)
 
 
 class ScreenAgent:
@@ -30,6 +37,7 @@ class ScreenAgent:
                 f = open(filename, 'rb')
 
                 self.sock.sendto(b'start', (self.ip, self.port))
+                logging.info("Sending screenshot...")
                 data = f.read(buf)
                 while data:
                     if self.sock.sendto(data, (self.ip, self.port)):
