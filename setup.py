@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='vdr',
-    version='1.0.8',
+    version='1.0.9',
     author='Maxence Lannuzel',
     author_email='maxence.lannuzel@ecole-navale.fr',
     description='A simple library to simulate a VDR.',
