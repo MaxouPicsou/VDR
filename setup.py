@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='vdr',
-    version='1.0.9',
+    version='2.0.0',
     author='Maxence Lannuzel',
     author_email='maxence.lannuzel@ecole-navale.fr',
     description='A simple library to simulate a VDR.',
@@ -11,7 +11,8 @@ setup(
     url='https://github.com/MaxouPicsou/VDR',
     packages=[
         'vdr',
-        'screenagent'
+        'screenagent',
+        'soundagent'
     ],
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
