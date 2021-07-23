@@ -13,6 +13,7 @@ import logging
 # List of creation time of files/frames
 frame_creation_times = []
 nmea_creation_times = []
+voice_creation_times = []
 
 # Parser of configuration file
 config = configparser.ConfigParser()
@@ -190,3 +191,52 @@ class ReceivingNmea(threading.Thread):
 
             except:
                 logging.error(errno)
+
+
+class ReceivingVoice(threading.Thread):
+
+    def __init__(self, vdr, key):
+        threading.Thread.__init__(self)
+        self.vdr = vdr
+        self.key = key
+
+    def run(self):
+
+        while True:
+            data = self.vdr.connections[self.key].recvfrom(1024)                 # Receiving data from the specified connection
+            path = self.vdr.path + "/voice/" + self.vdr.voice_filename + ".mp3"  # Path of the sound file that will be received data
+
+            # Testing if the file not already exists or is not currently processed
+            while os.path.exists(path):
+                logging.debug("Filename %s already exists", self.vdr.voice_filename)  # DEBUG
+                self.vdr.voice_filename = update(self.vdr.voice_filename)             # If it exists filename is updated
+                path = self.vdr.path + "/voice/" + self.vdr.voice_filename + ".mp3"   # Updating path
+
+            # Start to receive file when we receive "start"
+            if data[0] == b'start':
+                f = open(path, 'wb')                                  # Opening file to store received data
+                data = self.vdr.connections[self.key].recvfrom(8192)  # Receiving data from specified connection
+
+                # While we receive data of the sound
+                while data:
+                    # If we receive "stop" the sound reception is ended
+                    if data[0] == b'stop':
+                        logging.info("Sound %s received from %s", self.vdr.voice_filename, self.key)    # INFO
+                        f.close()                                                                       # Close the file
+                        voice_creation_times.append((self.vdr.voice_filename, os.path.getmtime(path)))  # Adding filename and creation timestamp to the list
+                        current_time = time.time()                                                      # Current time
+
+                        # Processing of removing oldest files
+                        if current_time > self.vdr.end_time:
+                            for i in voice_creation_times:                                              # Reading timestamp of the list
+                                if i[1] < current_time - self.duration:                                 # Check if it is too older
+                                    os.remove(self.vdr.path + "/voice/" + i[0] + ".mp3")                # Removing older file
+                                    logging.debug("Removing too old file %s", self.vdr.voice_filename)  # DEBUG
+                                    voice_creation_times.pop(0)                                         # Removing it from the list
+                                else:
+                                    break                                                               # Exit the loop if a file is not to older
+                        break                                                                           # Exit the loop that receive data
+                    # Else we continue to receive data picture and store it
+                    else:
+                        f.write(data[0])  # Write data into file
+                        data = self.vdr.connections[self.key].recvfrom(8192)                            # Receiving data
