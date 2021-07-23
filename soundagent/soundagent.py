@@ -29,7 +29,7 @@ class SoundAgent:
         buf = 8192
         while True:
             if not os.path.exists(filename):
-                os.system('arecord -d ' + ' -f U8 ' + filename)
+                os.system('arecord -d ' + self.duration + ' -f U8 ' + filename)
 
             f = open(filename, 'rb')
 
