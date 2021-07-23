@@ -229,7 +229,7 @@ class ReceivingVoice(threading.Thread):
                         # Processing of removing oldest files
                         if current_time > self.vdr.end_time:
                             for i in voice_creation_times:                                              # Reading timestamp of the list
-                                if i[1] < current_time - self.duration:                                 # Check if it is too older
+                                if i[1] < current_time - int(config['record']['duration']):             # Check if it is too older
                                     os.remove(self.vdr.path + "/voice/" + i[0] + ".mp3")                # Removing older file
                                     logging.debug("Removing too old file %s", self.vdr.voice_filename)  # DEBUG
                                     voice_creation_times.pop(0)                                         # Removing it from the list
