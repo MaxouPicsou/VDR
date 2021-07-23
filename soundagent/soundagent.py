@@ -1,3 +1,4 @@
+import sys
 import time
 import socket
 import os
@@ -28,23 +29,27 @@ class SoundAgent:
         filename = "record.mp3"
         buf = 8192
         while True:
-            if not os.path.exists(filename):
-                os.system('arecord -d ' + str(self.duration) + ' -f U8 ' + filename)
+            try:
+                if not os.path.exists(filename):
+                    os.system('arecord -d ' + str(self.duration) + ' -f U8 ' + filename)
 
-            f = open(filename, 'rb')
+                f = open(filename, 'rb')
 
-            self.sock.sendto(b'start', (self.ip, self.port))
-            logging.info("Sending sound...")
-            data = f.read(buf)
+                self.sock.sendto(b'start', (self.ip, self.port))
+                logging.info("Sending sound...")
+                data = f.read(buf)
 
-            while data:
-                if self.sock.sendto(data, (self.ip, self.port)):
-                    data = f.read(buf)
-                    time.sleep(0.02)
+                while data:
+                    if self.sock.sendto(data, (self.ip, self.port)):
+                        data = f.read(buf)
+                        time.sleep(0.02)
 
-            self.sock.sendto(b'stop', (self.ip, self.port))
-            if os.path.exists(filename):
-                os.remove(filename)
+                self.sock.sendto(b'stop', (self.ip, self.port))
+                if os.path.exists(filename):
+                    os.remove(filename)
+
+            except KeyboardInterrupt:
+                sys.exit()
 
 
 
