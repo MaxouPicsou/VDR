@@ -5,28 +5,31 @@ VDR is a Python library to simulate a VDR (Voyage Data Recorder).
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install vdr.
+Use the package manager [pip3](https://pip.pypa.io/en/stable/) to install vdr.
 
 ```bash
-pip install vdr
+pip3 install vdr
 ```
 
 ## Usage
-You first need to configure your VDR that will receive all the data.
+You need first to configure your VDR that will receive all the data.
 ```python
 import vdr
 
 VDR = vdr.Vdr('/home/USER')                         # Create the VDR with its storage path
-VDR.add_connection("localhost", 12345, 'ECDIS')     # Create socket connection called 'ECDIS'
+VDR.add_connection("localhost", 12345, 'ecdis')     # Create socket connection called 'ecdis'
 VDR.add_connection("localhost", 12346, 'nmea')      # Create socket connection called 'nmea'
+VDR.add_connection("localhost", 12347, 'voice')     # Create socket connection called 'voice'
 
 # Initialize threads with each data type that connections will received
-ecdis = vdr.ReceivingFrame(VDR, "ECDIS")
-nmea = vdr.ReceivingNmea(VDR, "nmea")
+ECDIS = vdr.ReceivingFrame(VDR, "ecdis")
+NMEA = vdr.ReceivingNmea(VDR, "nmea")
+VOICE = vdr.ReceivingVoice(VDR, "voice")
 
 # Start threads, ready to receive and store data
-ecdis.start()
-nmea.start()
+ECDIS.start()
+NMEA.start()
+VOICE.start()
 ```
 
 Then, the library proposed different kind of agent to facilitate data emission.
@@ -36,6 +39,15 @@ import screenagent
 
 agent = screenagent.ScreenAgent("localhost", 12345)
 agent.send_screenshot()
+
+
+```
+### Sound Agent
+```python
+import soundagent
+
+agent = soundagent.SoundAgent("localhost", 12347)
+agent.send_sound()
 
 
 ```
